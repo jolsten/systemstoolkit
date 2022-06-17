@@ -146,6 +146,8 @@ class InitialAttitude(Keyword):
     pass
 
 
+# class KeywordObjectEnum(KeywordEnum):
+
 class TimeFormat(Keyword, KeywordEnum):
     EpSec = EpSecTimeUnit
     EpMin = EpMinTimeUnit
@@ -165,6 +167,9 @@ class TimeFormat(Keyword, KeywordEnum):
     def convert(self, time: ArrayLike, epoch=None) -> ArrayLike:
         time_fmt = self.value(epoch)
         return time_fmt.convert(time)
+
+    def __str__(self) -> str: # pragma: no cover
+        return f'{str(self.keyword).ljust(KEYWORD_WIDTH)} {self.name}'
 
 
 class TrendingControl(Keyword):
