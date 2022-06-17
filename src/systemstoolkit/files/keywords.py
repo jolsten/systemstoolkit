@@ -6,6 +6,7 @@ from typing import Optional, Union
 from systemstoolkit.utils import stk_datetime
 from systemstoolkit.typing import DateTimeLike, ArrayLike
 from systemstoolkit.units.time import (
+    TimeUnit,
     EpSecTimeUnit,
     EpMinTimeUnit,
     EpHrTimeUnit,
@@ -47,7 +48,7 @@ class KeywordEnum(Enum):
     def _generate_next_value_(name, start, count, last_values):
         return name
 
-    def __str__(self) -> str:
+    def __str__(self) -> str: # pragma: no cover
         return f'{str(self.keyword).ljust(KEYWORD_WIDTH)} {self.name}'
 
 

@@ -6,7 +6,8 @@ from abc import ABC
 
 from systemstoolkit.typing import Union, DateTimeLike, DateTimeArrayLike
 
-class AbstractTimeUnit(ABC):
+
+class TimeUnit(ABC):
     def convert(
             self,
             time: Union[DateTimeLike, DateTimeArrayLike]
@@ -14,7 +15,7 @@ class AbstractTimeUnit(ABC):
         pass
 
 
-class EpochTimeUnit(AbstractTimeUnit):
+class EpochTimeUnit(TimeUnit):
     unit = 's'
 
     def __init__(
@@ -60,7 +61,7 @@ class EpDayTimeUnit(EpochTimeUnit):
 #     unit = 'Y'
 
 
-class UTCTime(AbstractTimeUnit):
+class UTCTime(TimeUnit):
     pass
 
 
@@ -110,5 +111,3 @@ class ISOYMDTimeUnit(UTCTime):
 
         time = np.asarray(time, dtype='datetime64[ms]')
         return time.astype(str)
-
-

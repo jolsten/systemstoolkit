@@ -73,7 +73,11 @@ class AttitudeFile(StkFile):
         
         formatted_time = self.time_fmt.convert(self.time, epoch=self.epoch.value)
         for t, row in zip(formatted_time, self.data):
-            print(t, ' '.join([f'{x:.6f}'.rjust(15) for x in row]), file=buf)
+            print(
+                str(t).rjust(15),
+                ' '.join([f'{x:.6f}'.rjust(15) for x in row]),
+                file=buf
+            )
         
         return buf.getvalue()
 

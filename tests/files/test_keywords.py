@@ -1,9 +1,11 @@
 import pytest
 
 from systemstoolkit.files.keywords import (
+    Keyword, KeywordEnum,
     MessageLevel, CentralBody, AttitudeDeviations, TimeFormat,
     Coordinate, CoordinateAxes, CoordinateAxesEpoch,
 )
+from systemstoolkit.units.time import TimeUnit
 
 
 @pytest.mark.parametrize('cls, keyword, value, input', [
@@ -59,3 +61,8 @@ def test_coordinate_compound_epoch_invalid():
             axes=CoordinateAxes('TEMEOfEpoch'),
             epoch=None
         )
+
+
+def test_time_format():
+    time_fmt = TimeFormat('isoymd')
+    assert issubclass(time_fmt.value, TimeUnit)
