@@ -1,10 +1,20 @@
-import datetime
-import numpy as np
 from enum import Enum, auto
 from dataclasses import dataclass, asdict
 from typing import Optional, Union
 
-from .utils import stk_datetime
+from systemstoolkit.utils import stk_datetime
+from systemstoolkit.typing import DateTimeLike
+from systemstoolkit.units.time import (
+    EpSecTimeUnit,
+    EpMinTimeUnit,
+    EpHrTimeUnit,
+    EpDayTimeUnit,
+    # EpYearTimeUnit,
+    YYYYDDDTimeUnit,
+    YYYYMMDDTimeUnit,
+    ISOYMDTimeUnit,
+)
+
 
 KEYWORD_WIDTH = 30
 
@@ -80,7 +90,7 @@ class InterpolationOrder(Keyword):
 
 @dataclass
 class Epoch(Keyword):
-    value: Union[datetime.datetime, np.datetime64]
+    value: DateTimeLike
 
     def __str__(self) -> str:
         return f'{str(self.keyword).ljust(KEYWORD_WIDTH)} {stk_datetime(self.value)}'
@@ -128,43 +138,22 @@ class InitialAttitude(Keyword):
     pass
 
 
-class TimeFormat(Keyword):
-    pass
+class TimeFormat(Keyword, KeywordEnum):
+    EpSec = EpSecTimeUnit
+    EpMin = EpMinTimeUnit
+    EpHour = EpHrTimeUnit
+    EpDays = EpDayTimeUnit
+    # EpYear = EpYearTimeUnit
+    YYYYDDD = YYYYDDDTimeUnit
+    YYYYMMDD = YYYYMMDDTimeUnit
+    ISOYMD = ISOYMDTimeUnit
+
+    @classmethod
+    def _missing_(cls, name):
+        for member in cls:
+            if member.name.lower() == name.replace('-', '').lower():
+                return member
 
 
 class TrendingControl(Keyword):
     pass
-
-
-class DataFileFormat(KeywordEnum):
-    def validate_data(self, time, data):
-        return time, data
-
-
-class AttitudeFileFormat(DataFileFormat):
-    # Quaternion-based formats
-    Quaternions = auto()
-    QuatScalarFirst = auto()
-    QuatAngVels = auto()
-    AngVels = auto()
-
-    # Euler-based Formats
-    EulerAngles = auto()
-    EulerAngleRates = auto()
-    EulerAnglesAndRates = auto()
-
-    # YPR-based formats
-    YPRAngles = auto()
-    YPRAngleRates = auto()
-    YPRAnglesAndRates = auto()
-
-    # DCM-based formats
-    DCM = auto()
-    DCMAngVels = auto()
-
-    # Vector-based formats
-    ECFVector = auto()
-    ECIVector = auto()
-
-    def __str__(self) -> str:
-        return f'AttitudeTime{self.name}'

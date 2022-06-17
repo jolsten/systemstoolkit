@@ -1,6 +1,8 @@
 import pytest
 
-from stkfiles.keywords import MessageLevel, CentralBody, CoordinateAxes, AttitudeDeviations
+from systemstoolkit.files.keywords import (
+    MessageLevel, CentralBody, CoordinateAxes, AttitudeDeviations
+)
 
 
 @pytest.mark.parametrize('cls, keyword, value, input', [

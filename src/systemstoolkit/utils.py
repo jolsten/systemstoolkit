@@ -3,23 +3,22 @@ import numpy as np
 import pathlib
 from typing import Union
 from dateutil.parser import parse as parse_datetime, ParserError
+from systemstoolkit.typing import DateTimeLike
 
 
 STK_DATE_FMT = '%d %b %Y %H:%M:%S.%f'
 
-def stk_datetime(
-    timestamp: Union[
-            datetime.datetime, 
-            np.datetime64,
-        ]
-    ) -> str:
+def stk_datetime(timestamp: DateTimeLike) -> str:
 
     if isinstance(timestamp, datetime.datetime):
-        return timestamp.strftime(STK_DATE_FMT)
-    elif isinstance(timestamp, np.datetime64):
-        return timestamp.astype(datetime.datetime).strftime(STK_DATE_FMT)
+        return timestamp.strftime(STK_DATE_FMT)[0:24]
 
-    raise TypeError(f'expected datetime.datetime or np.datetime64, got "{timestamp}" of type {type(timestamp)}')
+    elif isinstance(timestamp, np.datetime64):
+        return timestamp.astype(datetime.datetime).strftime(STK_DATE_FMT)[0:24]
+
+    raise TypeError(
+        f'Expected {DateTimeLike}, got "{timestamp}" of type {type(timestamp)}'
+    )
 
 
 def parse_file_data(file_text) -> tuple:

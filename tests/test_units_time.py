@@ -1,8 +1,9 @@
 import pytest
 from pytest import approx
+import datetime
 import numpy as np
 
-from stkfiles.units import (
+from systemstoolkit.units.time import (
     EpSecTimeUnit,
     EpMinTimeUnit,
     EpHrTimeUnit,
@@ -37,12 +38,14 @@ def test_utc_timeunit(time, yyyyddd, yyyymmdd):
 
     yd = YYYYDDDTimeUnit()
     ymd = YYYYMMDDTimeUnit()
-    assert yd.format(time) == approx(yyyyddd)
-    assert ymd.format(time) == approx(yyyymmdd)
+    iso = ISOYMDTimeUnit()
+    assert yd.convert(time) == approx(yyyyddd)
+    assert ymd.convert(time) == approx(yyyymmdd)
+    assert iso.convert(time) == time.astype(datetime.datetime).isoformat(sep='T', timespec='milliseconds')
 
     time = np.array([time, time, time, time, time])
-    assert yd.format(time) == approx(yyyyddd)
-    assert ymd.format(time) == approx(yyyymmdd)
+    assert yd.convert(time) == approx(yyyyddd)
+    assert ymd.convert(time) == approx(yyyymmdd)
 
 
 @pytest.mark.parametrize('time, s, m, h, D', EPOCH_TIMES)
@@ -54,4 +57,4 @@ def test_epoch_timeunit(time, s, m, h, D):
     EpochTimeUnits = [EpSecTimeUnit, EpMinTimeUnit, EpHrTimeUnit, EpDayTimeUnit]
     for cls, td in zip(EpochTimeUnits, [s, m, h, D]):
         a = cls(epoch=EPOCH)
-        assert a.format(time) == approx(td)
+        assert a.convert(time) == approx(td)

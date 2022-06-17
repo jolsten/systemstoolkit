@@ -2,8 +2,8 @@ import datetime
 import numpy as np
 
 from .files import AttitudeFile
+from .formats import AttitudeFileFormat
 from .keywords import (
-    AttitudeFileFormat,
     MessageLevel,
     CoordinateAxes,
     CoordinateAxesEpoch,
@@ -15,6 +15,7 @@ from .keywords import (
     AttitudeDeviations,
     BlockingFactor,
 )
+
 
 def attitude_file(
     time: np.ndarray,

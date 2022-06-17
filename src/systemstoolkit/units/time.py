@@ -4,16 +4,17 @@ from enum import Enum, auto
 from typing import Union
 from abc import ABC
 
-DateTimeLike = Union[datetime.datetime, np.datetime64]
-DateTimeOrArray = Union[datetime.datetime, np.datetime64, np.ndarray]
+from systemstoolkit.typing import Union, DateTimeLike, DateTimeArrayLike
 
-
-class TimeUnit(ABC):
-    def format(self, time: DateTimeOrArray):
+class AbstractTimeUnit(ABC):
+    def convert(
+            self,
+            time: Union[DateTimeLike, DateTimeArrayLike]
+        ) -> Union[DateTimeLike, DateTimeArrayLike]:
         pass
 
 
-class EpochTimeUnit(TimeUnit):
+class EpochTimeUnit(AbstractTimeUnit):
     unit = 's'
 
     def __init__(
@@ -31,11 +32,11 @@ class EpochTimeUnit(TimeUnit):
     def epoch(self, epoch: DateTimeLike):
         self._epoch = np.datetime64(epoch)
 
-    def format(
+    def convert(
             self,
-            time: DateTimeOrArray,
+            time: Union[DateTimeLike, DateTimeArrayLike],
         ):
-        time = np.asarray(time, dtype='datetime64[us]')
+        time = np.asarray(time, dtype='datetime64[ms]')
         return (time - self.epoch) / np.timedelta64(1, self.unit)
 
 
@@ -59,13 +60,17 @@ class EpDayTimeUnit(EpochTimeUnit):
 #     unit = 'Y'
 
 
-class UTCTime(TimeUnit):
+class UTCTime(AbstractTimeUnit):
     pass
 
 
 class YYYYDDDTimeUnit(UTCTime):
-    def format(self, time: DateTimeOrArray) -> np.ndarray:
-        time = np.asarray(time, dtype='datetime64[us]')
+    def convert(
+            self,
+            time: Union[DateTimeLike, DateTimeArrayLike]
+        ) -> Union[DateTimeLike, DateTimeArrayLike]:
+
+        time = np.asarray(time, dtype='datetime64[ms]')
 
         day = time.astype('datetime64[D]')
         year = day.astype('datetime64[Y]')
@@ -78,7 +83,11 @@ class YYYYDDDTimeUnit(UTCTime):
 
 
 class YYYYMMDDTimeUnit(UTCTime):
-    def format(self, time: DateTimeOrArray) -> np.ndarray:
+    def convert(
+            self,
+            time: Union[DateTimeLike, DateTimeArrayLike]
+        ) -> Union[DateTimeLike, DateTimeArrayLike]:
+
         time = np.asarray(time, dtype='datetime64[us]')
         day = time.astype('datetime64[D]')
         mon = time.astype('datetime64[M]')
@@ -94,8 +103,12 @@ class YYYYMMDDTimeUnit(UTCTime):
 
 
 class ISOYMDTimeUnit(UTCTime):
-    def format(self, time: DateTimeOrArray) -> np.ndarray:
-        time = np.asarray(time, dtype='datetime64[us]')
+    def convert(
+            self,
+            time: Union[DateTimeLike, DateTimeArrayLike]
+        ) -> Union[DateTimeLike, DateTimeArrayLike]:
+
+        time = np.asarray(time, dtype='datetime64[ms]')
         return time.astype(str)
 
 

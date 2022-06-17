@@ -4,6 +4,7 @@ from typing import Union, Optional
 from dataclasses import dataclass, asdict
 from enforce_typing import enforce_types
 
+from .formats import AttitudeFileFormat
 from .keywords import (
     Keyword,
     AttitudeDeviations,
@@ -19,7 +20,6 @@ from .keywords import (
     TimeFormat,
     TrendingControl,
     NumberOfAttitudePoints,
-    AttitudeFileFormat,
 )
 
 

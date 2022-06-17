@@ -1,8 +1,9 @@
 import pytest
 from dataclasses import asdict
-from stkfiles.keywords import Keyword
-from stkfiles.files import AttitudeFile, AttitudeFileFormat
-from stkfiles.utils import read_file_data, parse_file_data
+from systemstoolkit.files.keywords import Keyword
+from systemstoolkit.files.files import AttitudeFile
+from systemstoolkit.files.formats import AttitudeFileFormat
+from systemstoolkit.utils import read_file_data, parse_file_data
 
 
 FILE_Q = 'data/attitude/AttitudeTimeQuaternions.a'
