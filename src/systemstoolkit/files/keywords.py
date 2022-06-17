@@ -47,6 +47,9 @@ class KeywordEnum(Enum):
     def _generate_next_value_(name, start, count, last_values):
         return name
 
+    def __str__(self) -> str:
+        return f'{str(self.keyword).ljust(KEYWORD_WIDTH)} {self.name}'
+
 
 class MessageLevel(Keyword, KeywordEnum):
     Errors = auto()
