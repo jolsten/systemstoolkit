@@ -50,7 +50,7 @@ class AttitudeFile(StkFile):
     deviations: Optional[AttitudeDeviations] = None
     blocking: Optional[BlockingFactor] = None
     initial: Optional[InitialAttitude] = None
-    time_fmt: Optional[TimeFormat] = None
+    time_fmt: Optional[TimeFormat] = TimeFormat('EpSec')
     trending: Optional[TrendingControl] = None
 
     def __post_init__(self):
@@ -70,10 +70,9 @@ class AttitudeFile(StkFile):
 
         if self.epoch is None:
             self.epoch = ScenarioEpoch(self.time[0])
-        sse = (self.time - self.epoch.value) / np.timedelta64(1, 's')
         
-        for time, row in zip(sse, self.data):
-            t = f'{time:15.3f}'
+        formatted_time = self.time_fmt.convert(self.time, epoch=self.epoch.value)
+        for t, row in zip(formatted_time, self.data):
             print(t, ' '.join([f'{x:.6f}'.rjust(15) for x in row]), file=buf)
         
         return buf.getvalue()

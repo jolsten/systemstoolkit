@@ -4,7 +4,7 @@ from dataclasses import dataclass, asdict
 from typing import Optional, Union
 
 from systemstoolkit.utils import stk_datetime
-from systemstoolkit.typing import DateTimeLike
+from systemstoolkit.typing import DateTimeLike, ArrayLike
 from systemstoolkit.units.time import (
     EpSecTimeUnit,
     EpMinTimeUnit,
@@ -157,6 +157,10 @@ class TimeFormat(Keyword, KeywordEnum):
         for member in cls:
             if member.name.lower() == name.replace('-', '').lower():
                 return member
+
+    def convert(self, time: ArrayLike, epoch=None) -> ArrayLike:
+        time_fmt = self.value(epoch)
+        return time_fmt.convert(time)
 
 
 class TrendingControl(Keyword):
