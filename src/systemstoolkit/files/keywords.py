@@ -1,3 +1,4 @@
+import numpy as np
 from enum import Enum, auto
 from dataclasses import dataclass, asdict
 from typing import Optional, Union
@@ -91,6 +92,9 @@ class InterpolationOrder(Keyword):
 @dataclass
 class Epoch(Keyword):
     value: DateTimeLike
+
+    def __post_init__(self):
+        self.value = np.datetime64(self.value)
 
     def __str__(self) -> str:
         return f'{str(self.keyword).ljust(KEYWORD_WIDTH)} {stk_datetime(self.value)}'

@@ -5,6 +5,7 @@ from .files import AttitudeFile
 from .formats import AttitudeFileFormat
 from .keywords import (
     MessageLevel,
+    Coordinate,
     CoordinateAxes,
     CoordinateAxesEpoch,
     ScenarioEpoch,
@@ -39,7 +40,7 @@ def attitude_file(
         coord = CoordinateAxes(axes)
         if axes_epoch:
             axes_epoch = CoordinateAxesEpoch(axes_epoch)
-        axes = CoordinateAxes(axes=coord, epoch=axes_epoch)
+        axes = Coordinate(axes=coord, epoch=axes_epoch)
 
     if epoch:
         epoch = ScenarioEpoch(epoch)

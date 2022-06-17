@@ -26,9 +26,6 @@ from .keywords import (
 class StkFile:
     version = '11.0'
 
-    def __repr__(self) -> str:
-        return f'{self.__class__.__name__}()'
-
 
 ATTITUDE_FILE_TEMPLATE = '''stk.v.{version}
 BEGIN Attitude

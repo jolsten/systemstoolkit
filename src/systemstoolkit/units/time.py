@@ -10,7 +10,7 @@ class AbstractTimeUnit(ABC):
     def convert(
             self,
             time: Union[DateTimeLike, DateTimeArrayLike]
-        ) -> Union[DateTimeLike, DateTimeArrayLike]:
+        ) -> Union[DateTimeLike, DateTimeArrayLike]: # pragma: no cover
         pass
 
 
@@ -112,18 +112,3 @@ class ISOYMDTimeUnit(UTCTime):
         return time.astype(str)
 
 
-class TimeUnit(Enum):
-    EpSec = EpSecTimeUnit
-    EpMin = EpMinTimeUnit
-    EpHour = EpHrTimeUnit
-    EpDays = EpDayTimeUnit
-    # EpYear = EpYearTimeUnit
-    YYYYDDD = YYYYDDDTimeUnit
-    YYYYMMDD = YYYYMMDDTimeUnit
-    ISOYMD = ISOYMDTimeUnit
-
-    @classmethod
-    def _missing_(cls, name):
-        for member in cls:
-            if member.name.lower() == name.replace('-', '').lower():
-                return member

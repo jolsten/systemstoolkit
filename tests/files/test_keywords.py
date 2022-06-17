@@ -1,7 +1,8 @@
 import pytest
 
 from systemstoolkit.files.keywords import (
-    MessageLevel, CentralBody, CoordinateAxes, AttitudeDeviations
+    MessageLevel, CentralBody, AttitudeDeviations, TimeFormat,
+    Coordinate, CoordinateAxes, CoordinateAxesEpoch,
 )
 
 
@@ -19,3 +20,42 @@ from systemstoolkit.files.keywords import (
 def test_enum_keywords(cls, keyword, value, input):
     o = cls(input)
     assert str(o).split() == [keyword, value]
+
+
+def test_timeformat_lowercase_valid():
+    time_fmt = TimeFormat('isoymd')
+
+
+def test_timeformat_invalid():
+    with pytest.raises(ValueError):
+        time_fmt = TimeFormat('NotAValidTimeFormat')
+
+
+def test_coordinate_compound_noepoch_valid():
+    coord = Coordinate(
+        axes=CoordinateAxes('J2000'),
+        epoch=None,
+    )
+
+
+def test_coordinate_compound_noepoch_invalid():
+    with pytest.raises(ValueError):
+        coord = Coordinate(
+            axes=CoordinateAxes('J2000'),
+            epoch=CoordinateAxesEpoch('1986-03-04 20:45')
+        )
+
+
+def test_coordinate_compound_epoch_valid():
+    coord = Coordinate(
+        axes=CoordinateAxes('TEMEOfEpoch'),
+        epoch=CoordinateAxesEpoch('1986-03-04 20:45')
+    )
+
+
+def test_coordinate_compound_epoch_invalid():
+    with pytest.raises(ValueError):
+        coord = Coordinate(
+            axes=CoordinateAxes('TEMEOfEpoch'),
+            epoch=None
+        )
