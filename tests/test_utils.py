@@ -4,8 +4,8 @@ import datetime
 
 from systemstoolkit.utils import stk_datetime, read_file_data, parse_file_data
 
-FILE_Q = ('data/attitude/AttitudeTimeQuaternions.a', (361, 4))
-FILE_A = ('data/attitude/AttitudeTimeEulerAngles.a', (721, 3))
+FILE_Q = ('data/AttitudeTimeQuaternions.a', (361, 4))
+FILE_A = ('data/AttitudeTimeEulerAngles.a', (721, 3))
 
 
 @pytest.mark.parametrize('input, output', [

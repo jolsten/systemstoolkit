@@ -1,8 +1,8 @@
 import datetime
 import numpy as np
 
-from .files import AttitudeFile
-from .formats import AttitudeFileFormat
+from .files import AttitudeFile, SensorPointingFile
+from .formats import AttitudeFileFormat, SensorPointingFileFormat
 from .keywords import (
     MessageLevel,
     Coordinate,
@@ -15,23 +15,25 @@ from .keywords import (
     InterpolationOrder,
     AttitudeDeviations,
     BlockingFactor,
+    TimeFormat,
 )
 
 
 def attitude_file(
-    time: np.ndarray,
-    data: np.ndarray,
-    format: str = None,
-    epoch: datetime.datetime = None,
-    axes: str = None,
-    axes_epoch: datetime.datetime = None,
-    message: str = 'Warnings',
-    body: str = None,
-    int_method: str = None,
-    int_order: int = None,
-    deviations: str = None,
-    blocking: int = None,
-) -> str:
+        time: np.ndarray,
+        data: np.ndarray,
+        format: str = None,
+        time_format: str = 'EpSec',
+        epoch: datetime.datetime = None,
+        axes: str = None,
+        axes_epoch: datetime.datetime = None,
+        message: str = 'Warnings',
+        body: str = None,
+        int_method: str = None,
+        int_order: int = None,
+        deviations: str = None,
+        blocking: int = None,
+    ) -> str:
     '''Create an STK Attitude (.a) file.
     
     Params
@@ -115,8 +117,6 @@ def attitude_file(
     a_file: str
         The Attitude File text as a string.
     '''
-
-
     format = AttitudeFileFormat(format)
     if message:
         message = MessageLevel(message)
@@ -126,6 +126,9 @@ def attitude_file(
         if axes_epoch:
             axes_epoch = CoordinateAxesEpoch(axes_epoch)
         axes = Coordinate(axes=coord, epoch=axes_epoch)
+
+    if time_format:
+        time_format = TimeFormat(time_format)
 
     if epoch:
         epoch = ScenarioEpoch(epoch)
@@ -152,6 +155,7 @@ def attitude_file(
         data,
         format=format,
         axes=axes,
+        time_fmt=time_format,
         epoch=epoch,
         message=message,
         body=body,
@@ -161,3 +165,96 @@ def attitude_file(
     )
 
     return a_file.to_string()
+
+
+def sensor_pointing_file(
+        time: np.ndarray,
+        data: np.ndarray,
+        format: str = None,
+        time_format: str = 'EpSec',
+        epoch: datetime.datetime = None,
+        axes: str = None,
+        message: str = 'Warnings',
+        body: str = None,
+        deviations: str = None,
+    ) -> str:
+    '''Create an STK Sensor Pointing (.sp) file.
+    
+    Params
+    ------
+    time: np.ndarray[np.datetime64]
+
+    data: np.ndarray[][]
+
+    format: str
+        The file formats used to specify data points in the attitude file.
+        (i.e. "AttitudeTimeQuaternions" keyword for Quaternions)
+
+        Quaternions
+        EulerAngles
+        YPRAngles
+        AzElAngles
+    
+    epoch: datetime.datetime
+        ScenarioEpoch. This is the reference epoch time for the time values of the attitude data in the file. 
+        
+        There is no relationship between ScenarioEpoch and the scenario epoch in your STK scenario.
+        
+        The default is the time in time[0].
+    
+    axes: str
+        CoordinateAxes. AGI recommends that you supply these, but they are not required.
+
+        These are the reference axes from which the rotation to the body axes is performed. Normally, the coordinate axes is the name of a valid coordinate system for the central body specified above (see Central Body Coordinate Systems). Typically, each central body supports Fixed, J2000, ICRF, Inertial, TrueOfDate, and MeanOfDate, but some bodies support additional systems.
+
+        The default Coordinate Axes is Inertial, which is ICRF for Earth and Sun.
+
+    message: str
+        MessageLevel. You can set this value to determine the level of message(s) you receive from STK as it attempts to read the file. The value options are:
+
+            Errors - You only receive the reported error messages.
+            Warnings - You receive error messages plus reporting on other information (e.g., unrecognized keywords).
+            Verbose - You receive all that is in Warnings plus a success message if STK reads and accepts the complete file.
+
+    body: str
+        CentralBody. This is the central body that the attitude points are relative to. The keyword value that completes the phrase can be the name of any registered central body. You can find registered central bodies in the STKData\CentralBodies directory.
+
+        The default is the central body for the vehicle, and that default is Earth.
+
+    Returns
+    -------
+    sp_file: str
+        The Sensor Pointing File text as a string.
+    '''
+    format = SensorPointingFileFormat(format)
+    if message:
+        message = MessageLevel(message)
+
+    if axes:
+        coord = CoordinateAxes(axes)
+        axes = Coordinate(axes=coord)
+
+    if time_format:
+        time_format = TimeFormat(time_format)
+
+    if epoch:
+        epoch = ScenarioEpoch(epoch)
+
+    if body:
+        body = CentralBody(body)
+
+    if deviations:
+        deviations = AttitudeDeviations(deviations)
+
+    sp_file = SensorPointingFile(
+        time,
+        data,
+        format=format,
+        axes=axes,
+        epoch=epoch,
+        message=message,
+        body=body,
+        deviations=deviations,
+    )
+
+    return sp_file.to_string()

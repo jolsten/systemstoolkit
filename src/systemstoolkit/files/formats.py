@@ -52,3 +52,22 @@ class AttitudeFileFormat(DataFileFormat):
             return AngleValidator()
         else:
             return NoValidator()
+
+
+class SensorPointingFileFormat(DataFileFormat):
+    Quaternions = auto()
+    YPRAngles = auto()
+    EulerAngles = auto()
+    AzElAngles = auto()
+
+    def __str__(self) -> str:
+        return f'AttitudeTime{self.name}'
+
+    @property
+    def validator(self) -> DataValidator:
+        if self.name in ['Quaternions']:
+            return QuaternionValidator()
+        elif self.name in ['EulerAngles', 'YPRAngles']:
+            return AngleValidator()
+        else:
+            return NoValidator()

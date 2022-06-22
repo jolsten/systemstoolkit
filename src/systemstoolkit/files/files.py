@@ -1,10 +1,10 @@
 import io
 import numpy as np
 from typing import Union, Optional
+from numpy.typing import ArrayLike
 from dataclasses import dataclass, asdict
-from enforce_typing import enforce_types
 
-from .formats import AttitudeFileFormat
+from .formats import AttitudeFileFormat, SensorPointingFileFormat
 from .keywords import (
     Keyword,
     AttitudeDeviations,
@@ -36,11 +36,10 @@ END Attitude
 '''
 
 
-@enforce_types
 @dataclass
 class AttitudeFile(StkFile):
-    time: Union[list, np.ndarray]
-    data: Union[list, np.ndarray]
+    time: ArrayLike
+    data: ArrayLike
     format: AttitudeFileFormat
     epoch: Optional[ScenarioEpoch] = None
     message: Optional[MessageLevel] = MessageLevel('Warnings')
@@ -54,6 +53,9 @@ class AttitudeFile(StkFile):
     trending: Optional[TrendingControl] = None
 
     def __post_init__(self):
+        self.time = np.asarray(self.time)
+        self.data = np.asarray(self.data)
+        
         self.time, self.data = self.format.validate_data(self.time, self.data)
         self.points = NumberOfAttitudePoints(self.data.shape[0])
 
@@ -91,3 +93,17 @@ class AttitudeFile(StkFile):
             format = self.format,
             data = formatted_data,
         )
+
+
+@dataclass
+class SensorPointingFile(AttitudeFile):
+    time: ArrayLike
+    data: ArrayLike
+    format: SensorPointingFileFormat
+    epoch: Optional[ScenarioEpoch] = None
+    time_fmt: Optional[TimeFormat] = TimeFormat('EpSec')
+    message: Optional[MessageLevel] = MessageLevel('Warnings')
+    axes: Optional[Coordinate] = Coordinate(CoordinateAxes('ICRF'))
+    body: Optional[CentralBody] = CentralBody('Earth')
+    interp: Optional[Interpolation] = None
+    deviations: Optional[AttitudeDeviations] = None

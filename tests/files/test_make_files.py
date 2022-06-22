@@ -2,8 +2,8 @@ from systemstoolkit.files.builders import attitude_file
 import pytest
 from systemstoolkit.utils import read_file_data
 
-FILE_Q = 'data/attitude/AttitudeTimeQuaternions.a'
-FILE_A = 'data/attitude/AttitudeTimeEulerAngles.a'
+FILE_Q = 'data/AttitudeTimeQuaternions.a'
+FILE_A = 'data/AttitudeTimeEulerAngles.a'
 
 
 @pytest.mark.parametrize('file, format, kwargs', [

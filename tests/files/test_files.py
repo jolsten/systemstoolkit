@@ -9,8 +9,8 @@ from systemstoolkit.files.keywords import (
 )
 
 
-FILE_Q = 'data/attitude/AttitudeTimeQuaternions.a'
-FILE_A = 'data/attitude/AttitudeTimeEulerAngles.a'
+FILE_Q = 'data/AttitudeTimeQuaternions.a'
+FILE_A = 'data/AttitudeTimeEulerAngles.a'
 
 @pytest.mark.parametrize('file, format, kwargs', [
     (FILE_Q, 'quaternions', dict()),
