@@ -15,7 +15,6 @@ classifiers = [
 ]
 dependencies = [
     "numpy",
-    "enforce_typing",
     "dateutils",
 ]
 dynamic = ["version"]
