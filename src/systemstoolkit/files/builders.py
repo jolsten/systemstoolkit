@@ -97,7 +97,7 @@ def attitude_file(
             Verbose - You receive all that is in Warnings plus a success message if STK reads and accepts the complete file.
 
     body: str
-        CentralBody. This is the central body that the attitude points are relative to. The keyword value that completes the phrase can be the name of any registered central body. You can find registered central bodies in the STKData\CentralBodies directory.
+        CentralBody. This is the central body that the attitude points are relative to. The keyword value that completes the phrase can be the name of any registered central body. You can find registered central bodies in the STKData\\CentralBodies directory.
 
         The default is the central body for the vehicle, and that default is Earth.
 
@@ -217,7 +217,7 @@ def sensor_pointing_file(
             Verbose - You receive all that is in Warnings plus a success message if STK reads and accepts the complete file.
 
     body: str
-        CentralBody. This is the central body that the attitude points are relative to. The keyword value that completes the phrase can be the name of any registered central body. You can find registered central bodies in the STKData\CentralBodies directory.
+        CentralBody. This is the central body that the attitude points are relative to. The keyword value that completes the phrase can be the name of any registered central body. You can find registered central bodies in the STKData\\CentralBodies directory.
 
         The default is the central body for the vehicle, and that default is Earth.
 
