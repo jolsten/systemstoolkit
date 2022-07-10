@@ -1,6 +1,6 @@
 import datetime
 from abc import ABC
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Tuple
 import systemstoolkit.connect.validators as validators
 from systemstoolkit.exceptions import STKCommandError
 
@@ -54,6 +54,12 @@ class Scenario(Object):
         # Create new scenario
         command = f'New / Scenario {self.name}'
         self.connect.send(command)
+    
+    def get_time_period(self) -> Tuple[datetime.datetime, datetime.datetime]:
+        self.connect.send(f'GetTimePeriod {self.path}')
+        msg = self.connect.get_single_message()
+        print(msg)
+        return msg
 
 
 class Vehicle(Object):

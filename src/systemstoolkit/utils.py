@@ -1,7 +1,7 @@
 import datetime
 import numpy as np
 import pathlib
-from typing import Union
+from typing import Iterable
 from dateutil.parser import parse as parse_datetime, ParserError
 from systemstoolkit.typing import DateTimeLike
 
@@ -43,3 +43,19 @@ def parse_file_data(file_text) -> tuple:
 
 def read_file_data(file) -> tuple:
     return parse_file_data(pathlib.Path(file).read_text())
+
+
+def make_command(parts: Iterable) -> str:
+    fmt_parts = []
+    for p in parts:
+        if isinstance(p, str):
+            fmt_parts.append(p)
+        elif isinstance(p, (datetime.datetime, np.datetime64)):
+            fmt_parts.append(
+                f'"{stk_datetime(p)}"'
+            )
+        elif isinstance(p, Iterable):
+            fmt_parts.append(make_command(p))
+        else:
+            fmt_parts.append(str(p))
+    return ' '.join(fmt_parts)
