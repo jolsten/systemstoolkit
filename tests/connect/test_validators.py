@@ -9,7 +9,7 @@ import systemstoolkit.connect.validators as validators
     '123_Object',
 ])
 def test_valid_names(name):
-    validators.name_validator(name)
+    validators.name(name)
     assert True
 
 
