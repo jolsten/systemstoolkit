@@ -75,5 +75,3 @@ class VehicleAttachment(Object):
     def create(self) -> None:
         command = f'New / {self.parent}/{self.__class__.__name__} {self.name}'
         self.connect.send(command)
-
-

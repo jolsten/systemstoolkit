@@ -1,5 +1,13 @@
+<<<<<<< HEAD
 [run]
 omit = tests/*
 
 [tool:pytest]
 addopts = --cov=systemstoolkit --cov-report html
+=======
+[run]
+omit = tests/*
+
+[tool:pytest]
+addopts = --cov=systemstoolkit --cov-report html
+>>>>>>> 35a54389bd7199e199d4593870c92d2e6095ccf4
