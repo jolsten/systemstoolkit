@@ -1,4 +1,5 @@
 import datetime
+<<<<<<< HEAD
 from typing import Iterable, Optional, TYPE_CHECKING
 from systemstoolkit.utils import make_command
 from systemstoolkit.typing import TimeInterval
@@ -14,10 +15,15 @@ class SetState11ParameterMixin:
         **kwargs,
     ) -> None:
         raise NotImplementedError
+=======
+from typing import Iterable, Optional
+from systemstoolkit.utils import make_command
+>>>>>>> 35a54389bd7199e199d4593870c92d2e6095ccf4
 
 
 class SetStateCartesianMixin:
     def set_state_cartesian(
+<<<<<<< HEAD
         self: Vehicle,
         epoch: datetime.datetime,
         state: Iterable,
@@ -31,6 +37,18 @@ class SetStateCartesianMixin:
         
         if coord not in self._COORD_SYSTEM:
             raise ValueError(f'Coordinate System "{coord}" not in {self._COORD_SYSTEM}')
+=======
+        self,
+        epoch: datetime.datetime,
+        state: Iterable,
+        interval: Optional[tuple[datetime.datetime, datetime.datetime]] = None,
+        stepsize: float = 60.0,
+        prop: str = 'TwoBody',
+        coord: str = 'Fixed',
+    ) -> None:
+        if interval is None:
+            interval = 'UseScenarioInterval'
+>>>>>>> 35a54389bd7199e199d4593870c92d2e6095ccf4
 
         self.connect.send(make_command([
             'SetState', self.path, 'Cartesian', prop,
@@ -39,6 +57,7 @@ class SetStateCartesianMixin:
         ]))
 
 
+<<<<<<< HEAD
 class SetStateClassicalMixin:
     def set_state_classical(
         self: Vehicle,
@@ -203,3 +222,5 @@ class LaunchVehicleStateMixin(
     SetStateSimpleAscentMixin,
 ):
     pass
+=======
+>>>>>>> 35a54389bd7199e199d4593870c92d2e6095ccf4

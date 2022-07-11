@@ -1,6 +1,7 @@
 from .base import Vehicle
 from .sensor import Sensor
 <<<<<<< HEAD
+<<<<<<< HEAD
 from .mixins import SatelliteStateMixin
 
 
@@ -14,6 +15,11 @@ class Satellite(Vehicle, SatelliteStateMixin):
         'TwoBody', 'J2Perturbation', 'J4Perturbation', 'HPOP', 'LOP',
     )
 
+=======
+
+
+class Satellite(Vehicle):
+>>>>>>> 35a54389bd7199e199d4593870c92d2e6095ccf4
 =======
 
 
