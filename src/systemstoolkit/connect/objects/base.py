@@ -17,27 +17,56 @@ class Object(ABC):
     
     @property
     def name(self) -> str:
+        '''The object name.
+        
+        Returns
+        -------
+        name: str
+        '''
         return self.path.split('/')[-1]
     
     @property
     def parent(self) -> str:
+        '''The path to the parent object.
+        
+        Returns
+        -------
+        parent name: str
+        '''
         return '/'.join(self.path.split('/')[0:-2])
     
     @property
     def type(self) -> str:
+        '''The object class name.
+        
+        Returns
+        -------
+        class name: str
+        '''
         return self.__class__.__name__
 
     def __repr__(self) -> str:
-        n = self.__class__.__name__
-        return f'{n}(connect={self.connect}, object_path={self.path})'
+        return f'{self.type}(connect={self.connect}, object_path={self.path})'
 
     def unload(self) -> None:
+        '''Unload (delete) the object from the scenario.'''
         command = f'Unload / {self.path}'
         self.connect.send(command)
     
     def rename(self, name: str) -> None:
+        '''Rename the object.
+
+        Params
+        ------
+        name: str
+            The new object name.
+
+        Returns
+        -------
+        None
+        '''
         validators.name(name)
-        new_path = f'{self.parent}/{self.__class__.__name__}/{name}'
+        new_path = f'{self.parent}/{self.type}/{name}'
         try:
             self.connect.send(f'Rename {self.path} {name}')
         except STKCommandError as msg:
@@ -48,6 +77,7 @@ class Object(ABC):
 
 class Scenario(Object):
     def create(self) -> None:
+        '''Create a new Scenario.'''
         # Unload current scenario
         self.connect.send('Unload / *')
 
@@ -56,6 +86,7 @@ class Scenario(Object):
         self.connect.send(command)
     
     def get_time_period(self) -> Tuple[datetime.datetime, datetime.datetime]:
+        '''Get the Scenario Time Period.'''
         self.connect.send(f'GetTimePeriod {self.path}')
         msg = self.connect.get_single_message()
         print(msg)
@@ -67,11 +98,13 @@ class Vehicle(Object):
     _COORD_SYSTEM = ()
 
     def create(self) -> None:
-        command = f'New / */{self.__class__.__name__} {self.name}'
+        '''Add the Vehicle object in the current Scenario.'''
+        command = f'New / */{self.type} {self.name}'
         self.connect.send(command)
 
 
 class VehicleAttachment(Object):
     def create(self) -> None:
-        command = f'New / {self.parent}/{self.__class__.__name__} {self.name}'
+        '''Add the VehicleAttachment object to its parent object.'''
+        command = f'New / {self.parent}/{self.type} {self.name}'
         self.connect.send(command)
