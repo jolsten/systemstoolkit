@@ -1,75 +1,19 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 atomicwrites==1.4.0
 attrs==21.4.0
 build==0.8.0
 colorama==0.4.5
-coverage==6.4.1
 dateutils==0.6.12
-enforce-typing==1.0.0.post1
 iniconfig==1.1.1
-numpy==1.22.4
+mock==4.0.3
+numpy==1.23.0
 packaging==21.3
 pep517==0.12.0
 pluggy==1.0.0
 py==1.11.0
 pyparsing==3.0.9
 pytest==7.1.2
-pytest-cov==3.0.0
 python-dateutil==2.8.2
 pytz==2022.1
 six==1.16.0
-stkfiles==0.1.0
-# Editable Git install with no remote (systemstoolkits==0.1.0)
--e c:\users\jolst\python\systemstoolkit\src
+-e git+https://github.com/jolsten/systemstoolkit.git@959c67f84da3337ec5daa6cff7392c2522198017#egg=systemstoolkit
 tomli==2.0.1
-=======
-atomicwrites==1.4.0
-attrs==21.4.0
-build==0.8.0
-colorama==0.4.5
-coverage==6.4.1
-dateutils==0.6.12
-enforce-typing==1.0.0.post1
-iniconfig==1.1.1
-numpy==1.22.4
-packaging==21.3
-pep517==0.12.0
-pluggy==1.0.0
-py==1.11.0
-pyparsing==3.0.9
-pytest==7.1.2
-pytest-cov==3.0.0
-python-dateutil==2.8.2
-pytz==2022.1
-six==1.16.0
-stkfiles==0.1.0
-# Editable Git install with no remote (systemstoolkits==0.1.0)
--e c:\users\jolst\python\systemstoolkit\src
-tomli==2.0.1
->>>>>>> 35a54389bd7199e199d4593870c92d2e6095ccf4
-=======
-atomicwrites==1.4.0
-attrs==21.4.0
-build==0.8.0
-colorama==0.4.5
-coverage==6.4.1
-dateutils==0.6.12
-enforce-typing==1.0.0.post1
-iniconfig==1.1.1
-numpy==1.22.4
-packaging==21.3
-pep517==0.12.0
-pluggy==1.0.0
-py==1.11.0
-pyparsing==3.0.9
-pytest==7.1.2
-pytest-cov==3.0.0
-python-dateutil==2.8.2
-pytz==2022.1
-six==1.16.0
-stkfiles==0.1.0
-# Editable Git install with no remote (systemstoolkits==0.1.0)
--e c:\users\jolst\python\systemstoolkit\src
-tomli==2.0.1
->>>>>>> 35a54389bd7199e199d4593870c92d2e6095ccf4
