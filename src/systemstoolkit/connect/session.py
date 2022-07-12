@@ -82,7 +82,7 @@ class Connect:
     
     def get_single_message(self) -> SingleMessage:
         data = self._socket.recv(40)
-        command_name, data_length = data.decode().split()
+        command_name, data_length = data.decode().split('\x00')[0].split()
         
         # Determine length of message, get that many bytes
         data_length = int(data_length)
@@ -93,7 +93,7 @@ class Connect:
 
     def get_multi_message(self) -> MultiMessage:
         data = self._socket.recv(40)
-        command_name, data_length = data.decode().split()
+        command_name, data_length = data.decode().split('\x00')[0].split()
         
         # Determine length of message, get that many bytes
         data_length = int(data_length)
@@ -128,3 +128,7 @@ class Connect:
         obj = Satellite(self, f'*/Satellite/{name}')
         obj.create()
         return obj
+
+    def get_connect_units(self) -> str:
+        self.send('Units_Get * Connect Abbreviation')
+        return self.get_single_message()
