@@ -6,6 +6,7 @@ from systemstoolkit.exceptions import STKCommandError
 
 if TYPE_CHECKING:
     from systemstoolkit.connect import Connect
+    from systemstoolkit.connect.objects.sensor import Sensor
 
 
 class Object(ABC):
@@ -101,6 +102,15 @@ class Vehicle(Object):
         '''Add the Vehicle object in the current Scenario.'''
         command = f'New / */{self.type} {self.name}'
         self.connect.send(command)
+
+    def new_sensor(self, name: str) -> 'Sensor':
+        """Add a new sensor object to this parent."""
+        from systemstoolkit.connect.objects.sensor import Sensor
+
+        object_path = f'{self.path}/Sensor/{name}'
+        obj = Sensor(self.connect, object_path)
+        obj.create()
+        return obj
 
 
 class VehicleAttachment(Object):
