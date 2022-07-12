@@ -1,5 +1,4 @@
 from .base import Vehicle
-from .sensor import Sensor
 from .mixins import SatelliteStateMixin
 
 

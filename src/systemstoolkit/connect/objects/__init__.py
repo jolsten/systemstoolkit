@@ -1,3 +1,3 @@
 from .base import Scenario
-from .satellite import Satellite
+from .vehicles import Satellite
 from .sensor import Sensor

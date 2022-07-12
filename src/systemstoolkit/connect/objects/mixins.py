@@ -1,5 +1,5 @@
 import datetime
-from typing import Iterable, Optional, TYPE_CHECKING
+from typing import Iterable, Optional, Union, TYPE_CHECKING
 from systemstoolkit.utils import make_command
 from systemstoolkit.typing import TimeInterval
 from systemstoolkit.connect.objects.base import Vehicle
@@ -20,7 +20,7 @@ class SetStateCartesianMixin:
     def set_state_cartesian(
         self: Vehicle,
         epoch: datetime.datetime,
-        state: Iterable,
+        state: Iterable[Union[float, str]],
         interval: TimeInterval = 'UseScenarioInterval',
         stepsize: float = 60,
         prop: str = 'TwoBody',
@@ -43,7 +43,7 @@ class SetStateClassicalMixin:
     def set_state_classical(
         self: Vehicle,
         epoch: datetime.datetime,
-        state: Iterable,
+        state: Iterable[Union[float, str]],
         interval: TimeInterval = 'UseScenarioInterval',
         stepsize: float = 60,
         prop: str = 'TwoBody',
@@ -66,20 +66,51 @@ class SetStateEquiMixin:
     def set_state_equi(
         self: Vehicle,
         epoch: datetime.datetime,
-        state: Iterable,
+        state: Iterable[Union[float, str]],
         direction: str = 'Posigrade',
         interval: TimeInterval = 'UseScenarioInterval',
         stepsize: float = 60,
         prop: str = 'TwoBody',
         coord: str = 'Fixed',
     ) -> None:
-        if prop not in self._PROPAGATOR:
+        f"""Set the state of a Vehicle using Equinoctial elements.
+        
+        Params
+        ------
+        epoch: datetime.datetime
+            Epoch time for the state vector.
+        
+        state: Iterable[float]
+            If None, then the AGI database is used.
+
+            Otherwise, file must be a path to the TLE file.
+
+        direction: str
+            Equinoctial elements require a direction. Choices: {EQUI_DIRECTIONS}.
+
+        interval: TimeInterval
+            The time interval for the propagator.
+        
+        stepsize: float
+            The orbit propagator step size in seconds.
+        
+        prop: str
+            The propagator to use. Choices: {self._PROPAGATOR}
+        
+        coord: str
+            The coordinate system to use. Choices: {self._COORD_SYSTEM}
+
+        Returns
+        -------
+        None
+        """
+        if prop.lower() not in [x.lower() for x in self._PROPAGATOR]:
             raise ValueError(f'Propagator "{prop}" not in {self._PROPAGATOR}')
         
-        if coord not in self._COORD_SYSTEM:
+        if coord.lower() not in [x.lower() for x in self._COORD_SYSTEM]:
             raise ValueError(f'Coordinate System "{coord}" not in {self._COORD_SYSTEM}')
 
-        if direction not in EQUI_DIRECTIONS:
+        if direction.lower() not in [x.lower() for x in EQUI_DIRECTIONS]:
             raise ValueError(f'Direction "{direction}" not in {EQUI_DIRECTIONS}')
 
         self.connect.send(make_command([
@@ -119,10 +150,42 @@ class SetStateMixedSphericalMixin:
 class SetStateSGP4Mixin:
     def set_state_sgp4(
         self: Vehicle,
-        *args,
-        **kwargs,
+        ssc: int,
+        file: str = None,
+        interval: TimeInterval = 'UseScenarioInterval',
+        stepsize: float = 60,
     ) -> None:
-        raise NotImplementedError
+        """Set the state of a Vehicle using an SGP4 TLE.
+        
+        Params
+        ------
+        ssc: int
+            Space Surveillance Catalog Number of the desired TLE.
+        
+        file: Optional[str]
+            If None, then the AGI database is used.
+
+            Otherwise, file must be a path to the TLE file.
+
+        interval: TimeInterval
+            The time interval for the propagator.
+        
+        stepsize: float
+            The orbit propagator step size in seconds.
+
+        Returns
+        -------
+        None
+        """
+        if file is None:
+            source = 'AGIServer'
+        else:
+            file = f'File "{file}"'
+
+        self.connect.send(make_command([
+            'SetState', self.path, 'SGP4', interval, stepsize, ssc,
+            f'TLESource Automatic Source {source} UseTLE All SwitchMethod TCA',
+        ]))
 
 
 class SetStateSimpleAscentMixin:
