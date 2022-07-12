@@ -26,6 +26,39 @@ class SetStateCartesianMixin:
         prop: str = 'TwoBody',
         coord: str = 'Fixed',
     ) -> None:
+        """Set the state of a Vehicle using Cartesian coordinates.
+
+        Params
+        ------
+        epoch: datetime.datetime
+            Epoch time for the state vector.
+        
+        state: Iterable[float]
+            The 6-element cartesian state vector as a list or tuple, for instance. Elements are as follows:
+
+                X-Position [?]
+                Y-Position [?]
+                Z-Position [?]
+                X-Velocity [?/s]
+                Y-Velocity [?/s]
+                Z-Velocity [?/s]
+
+        interval: TimeInterval
+            The time interval for the propagator.
+        
+        stepsize: float
+            The orbit propagator step size in seconds.
+        
+        prop: str
+            The propagator to use. Choices: {self._PROPAGATOR}
+        
+        coord: str
+            The coordinate system to use. Choices: {self._COORD_SYSTEM}
+
+        Returns
+        -------
+        None
+        """
         if prop not in self._PROPAGATOR:
             raise ValueError(f'Propagator "{prop}" not in {self._PROPAGATOR}')
         
@@ -49,6 +82,40 @@ class SetStateClassicalMixin:
         prop: str = 'TwoBody',
         coord: str = 'Fixed',
     ) -> None:
+        """Set the state of a Vehicle using Classical orbital elements.
+
+        Params
+        ------
+        epoch: datetime.datetime
+            Epoch time for the state vector.
+        
+        state: Iterable[float]
+            The 6-element classical orbital elements as a list or tuple, for instance. Elements are as follows:
+
+                Semi-Major Axis     [?]
+                Eccentricity        [-]
+                Inclination         [-]
+                Argument of Perigee [deg]
+                RAAN                [deg]
+                Mean Anomaly        [deg]
+
+        interval: TimeInterval
+            The time interval for the propagator.
+        
+        stepsize: float
+            The orbit propagator step size in seconds.
+        
+        prop: str
+            The propagator to use. Choices: {self._PROPAGATOR}
+        
+        coord: str
+            The coordinate system to use. Choices: {self._COORD_SYSTEM}
+
+        Returns
+        -------
+        None
+        """
+
         if prop not in self._PROPAGATOR:
             raise ValueError(f'Propagator "{prop}" not in {self._PROPAGATOR}')
         
@@ -81,9 +148,14 @@ class SetStateEquiMixin:
             Epoch time for the state vector.
         
         state: Iterable[float]
-            If None, then the AGI database is used.
+            The 6-element equinoctial element vector as a list or tuple, for instance. Elements are as follows:
 
-            Otherwise, file must be a path to the TLE file.
+                Semi-Major Axis [?]
+                h               [-]
+                k               [-]
+                p               [-]
+                q               [-]
+                Mean Longitude  [deg]
 
         direction: str
             Equinoctial elements require a direction. Choices: {EQUI_DIRECTIONS}.
