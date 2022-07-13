@@ -5,15 +5,15 @@ import systemstoolkit.connect.validators as validators
 from systemstoolkit.exceptions import STKCommandError
 
 if TYPE_CHECKING:
-    from systemstoolkit.connect import Connect
-    from systemstoolkit.connect.objects.sensor import Sensor
+    from systemstoolkit.connect import Connect # pragma: no cover
+    from systemstoolkit.connect.objects.sensor import Sensor # pragma: no cover
 
 
 class Object(ABC):
     # TYPE HINT MUST BE STRING BECAUSE OF CIRCULAR IMPORT
-    def __init__(self, connect: 'Connect', object_path: str) -> None:
+    def __init__(self, connect: 'Connect', path: str) -> None:
         self.connect = connect
-        self.path = object_path
+        self.path = path
         self.children = []
     
     @property
@@ -47,7 +47,7 @@ class Object(ABC):
         return self.__class__.__name__
 
     def __repr__(self) -> str:
-        return f'{self.type}(connect={self.connect}, object_path={self.path})'
+        return f'{self.type}(connect={self.connect}, path="{self.path}")'
 
     def unload(self) -> None:
         '''Unload (delete) the object from the scenario.'''

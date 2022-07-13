@@ -270,7 +270,7 @@ class SetStateSGP4Mixin:
         if file is None:
             source = 'AGIServer'
         else:
-            file = f'File "{file}"'
+            source = f'File "{file}"'
 
         self.connect.send(make_command([
             'SetState', self.path, 'SGP4', interval, stepsize, ssc,

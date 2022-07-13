@@ -33,6 +33,9 @@ class Connect:
         self._history = None
         self.units = {}
     
+    def __repr__(self) -> str:
+        return f'Connect(host="{self.host}", port={self.port})'
+
     def __enter__(self) -> None:
         self.connect()
         return self

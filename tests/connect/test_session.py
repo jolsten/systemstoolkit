@@ -2,6 +2,7 @@ import pytest
 import mock
 from systemstoolkit.connect.session import Connect
 from systemstoolkit.connect.objects import Scenario, Satellite, Sensor
+from systemstoolkit.exceptions import STKCommandError
 
 
 def test_connect_socket():
@@ -16,18 +17,33 @@ def test_connect_socket():
     'New / Scenario See_DC',
     'New / */Satellite ERS1',
 ])
-def test_send_command(command):
+def test_send_command_ack(command):
     with mock.patch('socket.socket') as mock_sock:
-        s = Connect()
-        s.connect()
-        assert s._socket.connect.call_count == 1
-
         # Set the recv return value to be ACK so get_ack() works in send()
         mock_sock.return_value.recv.return_value = b'ACK'
-        
-        s.send(command)
-        sent_command = s._socket.sendall.call_args[0][0].decode().strip()
-        assert sent_command == command.strip()
+
+        with Connect() as c:
+            assert c._socket.connect.call_count == 1
+
+            c.send(command)
+            sent_command = c._socket.sendall.call_args[0][0].decode().strip()
+            assert sent_command == command.strip()
+
+
+@pytest.mark.parametrize('command', [
+    'New / Scenario See_DC',
+    'New / */Satellite ERS1',
+])
+def test_send_command_nack(command):
+    with mock.patch('socket.socket') as mock_sock:
+        # Set the recv return value to be ACK so get_ack() works in send()
+        mock_sock.return_value.recv.return_value = b'NACK'
+
+        with Connect() as c:
+            with pytest.raises(STKCommandError):
+                c.send(command)
+                sent_command = c._socket.sendall.call_args[0][0].decode().strip()
+                assert sent_command == command.strip()
 
 
 def test_new_scenario():

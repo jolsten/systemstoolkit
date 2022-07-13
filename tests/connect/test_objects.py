@@ -2,7 +2,40 @@ import pytest
 import datetime
 import mock
 from systemstoolkit.connect import Connect
-from systemstoolkit.connect.objects import Satellite
+from systemstoolkit.connect.objects import Scenario, Satellite
+
+
+def test_object_repr():
+    sat_obj = Satellite(None, '*/Satellite/ERS1')
+    assert repr(sat_obj) == 'Satellite(connect=None, path="*/Satellite/ERS1")'
+
+
+def test_satellite_unload():
+    exp = 'Unload / */Satellite/ERS1'
+    with mock.patch('socket.socket') as mock_sock:
+        mock_sock.return_value.recv.return_value = b'ACK'
+
+        with Connect() as c:
+            print(c)
+            sat_obj = Satellite(c, '*/Satellite/ERS1')
+            sat_obj.unload()
+
+            got = c._socket.sendall.call_args[0][0].decode().strip()
+            assert got == exp
+
+
+def test_satellite_rename():
+    exp = 'Rename */Satellite/Satellite1 Shuttle'
+    with mock.patch('socket.socket') as mock_sock:
+        mock_sock.return_value.recv.return_value = b'ACK'
+
+        with Connect() as c:
+            print(c)
+            sat_obj = Satellite(c, '*/Satellite/Satellite1')
+            sat_obj.rename('Shuttle')
+
+            got = c._socket.sendall.call_args[0][0].decode().strip()
+            assert got == exp
 
 
 def test_set_state_cartesian():
@@ -77,6 +110,24 @@ def test_set_state_equi():
             assert got == exp
 
 
+def test_set_state_sgp4():
+    exp = r'SetState */Satellite/SGP4Sat SGP4 UseScenarioInterval 60.0 11417 TLESource Automatic Source File "c:\MyTemp\B44150.tle" UseTLE All SwitchMethod TCA'
+    with mock.patch('socket.socket') as mock_sock:
+        mock_sock.return_value.recv.return_value = b'ACK'
+
+        with Connect() as c:
+            print(c)
+            sat_obj = Satellite(c, '*/Satellite/SGP4Sat')
+            sat_obj.set_state_sgp4(
+                ssc=11417,
+                file=r'c:\MyTemp\B44150.tle',
+                stepsize='60.0',
+            )
+
+            got = c._socket.sendall.call_args[0][0].decode().strip()
+            assert got == exp
+
+
 def test_set_state_from_file_1():
     exp = r'SetState */Satellite/Shuttle FromFile "C:\stk\User\Data\EphemFile.e"'
     with mock.patch('socket.socket') as mock_sock:
@@ -108,3 +159,45 @@ def test_set_state_from_file_2():
 
             got = c._socket.sendall.call_args[0][0].decode().strip()
             assert got == exp
+
+
+def test_set_state_cartesian_invalid_prop():
+    with mock.patch('socket.socket') as mock_sock:
+        mock_sock.return_value.recv.return_value = b'ACK'
+
+        with Connect() as c:
+            with pytest.raises(ValueError):
+                print(c)
+                sat_obj = Satellite(c, '*/Satellite/ERS1')
+                sat_obj.set_state_cartesian(
+                    epoch=datetime.datetime(2000, 11, 1),
+                    state=(
+                        '-5465000.513055', '4630000.194365', '0.0',
+                        '712.713627', '841.292034', '7377.687805'
+                    ),
+                    interval=(datetime.datetime(2000,11,1), datetime.datetime(2000,11,1,8)),
+                    stepsize='60',
+                    prop='NotAPropagator',
+                    coord='J2000',
+                )
+
+
+def test_set_state_cartesian_invalid_coordsys():
+    with mock.patch('socket.socket') as mock_sock:
+        mock_sock.return_value.recv.return_value = b'ACK'
+
+        with Connect() as c:
+            with pytest.raises(ValueError):
+                print(c)
+                sat_obj = Satellite(c, '*/Satellite/ERS1')
+                sat_obj.set_state_cartesian(
+                    epoch=datetime.datetime(2000, 11, 1),
+                    state=(
+                        '-5465000.513055', '4630000.194365', '0.0',
+                        '712.713627', '841.292034', '7377.687805'
+                    ),
+                    interval=(datetime.datetime(2000,11,1), datetime.datetime(2000,11,1,8)),
+                    stepsize='60',
+                    prop='J4Perturbation',
+                    coord='NotACoordSystem',
+                )
