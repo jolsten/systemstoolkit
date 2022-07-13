@@ -31,7 +31,7 @@ class Connect:
         self.log = log
         self._socket = None
         self._history = None
-        self.units = ConnectUnitsDefaults
+        self.units = {}
     
     def __enter__(self) -> None:
         self.connect()

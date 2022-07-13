@@ -12,30 +12,6 @@ def test_connect_socket():
         assert s._socket.connect.call_count == 1
 
 
-
-class MockConnect:
-    def __init__(
-        self,
-        host: str = 'localhost',
-        port: int = 50001,
-        return_value = 'ACK',
-    ) -> None:
-        self.host = host
-        self.port = port
-        self.return_value = return_value
-    
-    def __enter__(self):
-        with mock.patch('socket.socket') as mock_sock:
-            self.connect = Connect(self.host, self.port)
-            self.connect()
-
-    def __exit__(self):
-        self.connect.close()
-
-    def get_sent(self) -> list:
-        return
-
-
 @pytest.mark.parametrize('command', [
     'New / Scenario See_DC',
     'New / */Satellite ERS1',
