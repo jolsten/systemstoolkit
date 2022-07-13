@@ -13,6 +13,13 @@ def test_connect_socket():
         assert s._socket.connect.call_count == 1
 
 
+def test_connect_socket_refused():
+    c = Connect('localhost', 1)
+
+    with pytest.raises(ConnectionRefusedError):
+        c.connect()
+
+
 @pytest.mark.parametrize('command', [
     'New / Scenario See_DC',
     'New / */Satellite ERS1',
@@ -22,12 +29,15 @@ def test_send_command_ack(command):
         # Set the recv return value to be ACK so get_ack() works in send()
         mock_sock.return_value.recv.return_value = b'ACK'
 
-        with Connect() as c:
+        with Connect(log=True) as c:
             assert c._socket.connect.call_count == 1
 
             c.send(command)
             sent_command = c._socket.sendall.call_args[0][0].decode().strip()
             assert sent_command == command.strip()
+                
+            # Check that command shows up in the last spot in command log
+            assert c._history[-1] == (command.strip(), 'ACK')
 
 
 @pytest.mark.parametrize('command', [
@@ -39,11 +49,14 @@ def test_send_command_nack(command):
         # Set the recv return value to be ACK so get_ack() works in send()
         mock_sock.return_value.recv.return_value = b'NACK'
 
-        with Connect() as c:
+        with Connect(log=True) as c:
             with pytest.raises(STKCommandError):
                 c.send(command)
                 sent_command = c._socket.sendall.call_args[0][0].decode().strip()
                 assert sent_command == command.strip()
+                
+                # Check that command shows up in the last spot in command log
+                assert c._history[-1] == (command.strip(), 'NACK')
 
 
 def test_new_scenario():
