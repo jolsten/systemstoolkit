@@ -12,6 +12,7 @@ SingleMessage = collections.namedtuple(
     'SingleMessage',
     ['CommandName', 'DataLength', 'Data'],
 )
+
 MultiMessage = collections.namedtuple(
     'MultiMessage',
     ['CommandName', 'DataLength', 'Messages'],
@@ -30,6 +31,7 @@ class Connect:
         self.log = log
         self._socket = None
         self._history = None
+        self.units = ConnectUnitsDefaults
     
     def __enter__(self) -> None:
         self.connect()
@@ -131,4 +133,9 @@ class Connect:
 
     def get_connect_units(self) -> str:
         self.send('Units_Get * Connect Abbreviation')
-        return self.get_single_message()
+        msg = self.get_single_message()
+        items = [x.split() for x in msg.Data.strip().replace(';', '').splitlines()]
+        return {dim.lower(): unit for dim, unit in items}
+
+    def update_connect_units(self) -> None:
+        self.units = self.get_connect_units()

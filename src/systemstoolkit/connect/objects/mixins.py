@@ -36,12 +36,12 @@ class SetStateCartesianMixin:
         state: Iterable[float]
             The 6-element cartesian state vector as a list or tuple, for instance. Elements are as follows:
 
-                X-Position [?]
-                Y-Position [?]
-                Z-Position [?]
-                X-Velocity [?/s]
-                Y-Velocity [?/s]
-                Z-Velocity [?/s]
+                X-Position [m]
+                Y-Position [m]
+                Z-Position [m]
+                X-Velocity [m/s]
+                Y-Velocity [m/s]
+                Z-Velocity [m/s]
 
         interval: TimeInterval
             The time interval for the propagator.
@@ -92,7 +92,7 @@ class SetStateClassicalMixin:
         state: Iterable[float]
             The 6-element classical orbital elements as a list or tuple, for instance. Elements are as follows:
 
-                Semi-Major Axis     [?]
+                Semi-Major Axis     [m]
                 Eccentricity        [-]
                 Inclination         [-]
                 Argument of Perigee [deg]
@@ -150,7 +150,7 @@ class SetStateEquiMixin:
         state: Iterable[float]
             The 6-element equinoctial element vector as a list or tuple, for instance. Elements are as follows:
 
-                Semi-Major Axis [?]
+                Semi-Major Axis [m]
                 h               [-]
                 k               [-]
                 p               [-]
