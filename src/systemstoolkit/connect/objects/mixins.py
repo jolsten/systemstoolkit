@@ -186,19 +186,37 @@ class SetStateEquiMixin:
             raise ValueError(f'Direction "{direction}" not in {EQUI_DIRECTIONS}')
 
         self.connect.send(make_command([
-            'SetState', self.path, 'Classical', prop,
+            'SetState', self.path, 'Equi', prop,
             interval, stepsize, coord,
-            epoch, state
+            epoch, state, direction,
         ]))
 
 
 class SetStateFromFileMixin:
     def set_state_from_file(
         self: Vehicle,
-        *args,
-        **kwargs,
+        filepath: str,
+        epoch: Optional[datetime.datetime] = None,
     ) -> None:
-        raise NotImplementedError
+        f"""Set the state of a Vehicle using an External File.
+        
+        Params
+        ------
+        epoch: Optional[datetime.datetime]
+            Overwrite the start time for the data file.
+
+        Returns
+        -------
+        None
+        """
+        cmds = [
+            'SetState', self.path, 'FromFile', f'"{filepath}"',
+        ]
+
+        if epoch is not None:
+            cmds.extend(['StartTime', epoch])
+
+        self.connect.send(make_command(cmds))
 
 
 class SetStateGPSMixin:
