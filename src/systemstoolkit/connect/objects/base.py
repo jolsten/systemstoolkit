@@ -6,7 +6,7 @@ from systemstoolkit.exceptions import STKCommandError
 
 if TYPE_CHECKING:
     from systemstoolkit.connect import Connect # pragma: no cover
-    from systemstoolkit.connect.objects.sensor import Sensor # pragma: no cover
+    from systemstoolkit.connect.objects.sensors import Sensor # pragma: no cover
 
 
 class Object(ABC):
@@ -54,6 +54,11 @@ class Object(ABC):
         command = f'Unload / {self.path}'
         self.connect.send(command)
     
+    def create(self) -> None:
+        '''Add the Vehicle object in the current Scenario.'''
+        command = f'New / */{self.type} {self.name}'
+        self.connect.send(command)
+
     def rename(self, name: str) -> None:
         '''Rename the object.
 
@@ -98,14 +103,9 @@ class Vehicle(Object):
     _PROPAGATOR = ()
     _COORD_SYSTEM = ()
 
-    def create(self) -> None:
-        '''Add the Vehicle object in the current Scenario.'''
-        command = f'New / */{self.type} {self.name}'
-        self.connect.send(command)
-
     def new_sensor(self, name: str) -> 'Sensor':
         """Add a new sensor object to this parent."""
-        from systemstoolkit.connect.objects.sensor import Sensor
+        from systemstoolkit.connect.objects.sensors import Sensor
 
         object_path = f'{self.path}/Sensor/{name}'
         obj = Sensor(self.connect, object_path)

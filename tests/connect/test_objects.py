@@ -2,7 +2,7 @@ import pytest
 import datetime
 import mock
 from systemstoolkit.connect import Connect
-from systemstoolkit.connect.objects import Scenario, Satellite
+from systemstoolkit.connect.objects import Scenario, Satellite, Facility
 
 
 def test_object_repr():
@@ -201,3 +201,45 @@ def test_set_state_cartesian_invalid_coordsys():
                     prop='J4Perturbation',
                     coord='NotACoordSystem',
                 )
+
+
+def test_create_facility():
+    exp = 'New / */Facility FacilityName'
+    with mock.patch('socket.socket') as mock_sock:
+        mock_sock.return_value.recv.return_value = b'ACK'
+
+        with Connect() as c:
+            print(c)
+            fac_obj = Facility(c, '*/Facility/FacilityName')
+            fac_obj.create()
+
+            got = c._socket.sendall.call_args[0][0].decode().strip()
+            assert got == exp
+
+
+def test_facility_set_position_geodetic():
+    exp = 'SetPosition */Facility/Wallops Geodetic 37.9 -75.5 0.0'
+    with mock.patch('socket.socket') as mock_sock:
+        mock_sock.return_value.recv.return_value = b'ACK'
+
+        with Connect() as c:
+            print(c)
+            fac_obj = Facility(c, '*/Facility/Wallops')
+            fac_obj.set_position_geodetic('37.9', '-75.5', '0.0')
+
+            got = c._socket.sendall.call_args[0][0].decode().strip()
+            assert got == exp
+
+
+def test_facility_set_position_geocentric():
+    exp = 'SetPosition */Facility/Wallops Geocentric 37.9 -75.5 0.0'
+    with mock.patch('socket.socket') as mock_sock:
+        mock_sock.return_value.recv.return_value = b'ACK'
+
+        with Connect() as c:
+            print(c)
+            fac_obj = Facility(c, '*/Facility/Wallops')
+            fac_obj.set_position_geocentric('37.9', '-75.5', '0.0')
+
+            got = c._socket.sendall.call_args[0][0].decode().strip()
+            assert got == exp
