@@ -1,6 +1,4 @@
 from typing import TYPE_CHECKING, Optional
-
-from systemstoolkit.utils import make_command
 from systemstoolkit.connect.objects.base import Object
 
 if TYPE_CHECKING:
@@ -38,6 +36,10 @@ class Facility(Object):
         command = f'SetPosition {self.path} Geocentric {lat} {lon} {alt}'
         if msl:
             command = command + ' MSL'
+        self.connect.send(command)
+    
+    def set_height_above_ground(self, height: float) -> None:
+        command = f'SetHeightAboveGround {self.path} {height}'
         self.connect.send(command)
 
 
