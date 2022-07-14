@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, Optional
 
 from systemstoolkit.utils import make_command
-from .base import Object
+from systemstoolkit.connect.objects.base import Object
 
 if TYPE_CHECKING:
     from systemstoolkit.connect import Connect # pragma: no cover
