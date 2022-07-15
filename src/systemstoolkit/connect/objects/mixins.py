@@ -2,7 +2,7 @@ import datetime
 from typing import Iterable, Optional, Union, TYPE_CHECKING
 from systemstoolkit.utils import make_command
 from systemstoolkit.typing import TimeInterval
-from systemstoolkit.connect.objects.base import Object, Vehicle
+from systemstoolkit.connect.objects.base import Object, Vehicle, Location
 
 EQUI_DIRECTIONS = ('Retrograde', 'Posigrade')
 
@@ -667,7 +667,7 @@ class FacilityConstraintMixin(
     SunConstraintMixin,
 ):
     def set_constraint_azimuth_rate(
-        self: Object,
+        self: Location,
         min: Optional[float] = None,
         max: Optional[float] = None,
     ) -> None:
@@ -686,7 +686,7 @@ class FacilityConstraintMixin(
         self._set_constraint_minmax('AzimuthRate', min=min, max=max)
 
     def set_constraint_elevation_rate(
-        self: Object,
+        self: Location,
         min: Optional[float] = None,
         max: Optional[float] = None,
     ) -> None:

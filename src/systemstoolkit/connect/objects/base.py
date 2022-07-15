@@ -113,8 +113,12 @@ class Vehicle(Object):
         return obj
 
 
-class VehicleAttachment(Object):
+class Attachment(Object):
     def create(self) -> None:
         '''Add the VehicleAttachment object to its parent object.'''
         command = f'New / {self.parent}/{self.type} {self.name}'
         self.connect.send(command)
+
+
+class Location(Object):
+    pass

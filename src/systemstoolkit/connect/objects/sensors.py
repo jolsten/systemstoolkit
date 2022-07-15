@@ -1,6 +1,6 @@
-from .base import VehicleAttachment
+from .base import Attachment
 
 
-class Sensor(VehicleAttachment):
+class Sensor(Attachment):
     pass
 
