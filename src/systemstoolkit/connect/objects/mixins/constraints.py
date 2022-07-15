@@ -1,7 +1,7 @@
 from typing import Optional
 from systemstoolkit.typing import TimeInterval
 from systemstoolkit.connect.objects.base import Object, Vehicle, Location
-
+import systemstoolkit.connect.validators as validators
 
 class BaseConstraintMixin:
     def _set_constraint_minmax(
@@ -15,6 +15,9 @@ class BaseConstraintMixin:
         
         if max is None:
             max = 'Off'
+
+        if min is not None and max is not None and min > max:
+            raise ValueError(f'Min "{min}" must be less than or equal to Max "{max}"')
 
         command = f'SetConstraint {self.path} {constraint_name} Min {min} Max {max}'
         self.connect.send(command)
@@ -49,6 +52,16 @@ class BasicConstraintMixin:
             Set the maximum value for this constraint.
             If value is None, then disable this constraint.
         """
+        validators.value(min, 0, 360)
+        validators.value(max, min, 360)
+
+        # Must be specified together or not at all
+        a = bool(min is None)
+        b = bool(max is None)
+
+        if (a and not b) or (not a and b):
+            raise ValueError(f'Azimuth constraint must have both min and max, or neither')
+
         self._set_constraint_minmax('AzimuthAngle', min=min, max=max)
 
     def set_constraint_elevation(
@@ -68,6 +81,8 @@ class BasicConstraintMixin:
             Set the maximum value for this constraint.
             If value is None, then disable this constraint.
         """
+        validators.value(min, 0, 90)
+        validators.value(max, min, 90)
         self._set_constraint_minmax('ElevationAngle', min=min, max=max)
 
     def set_constraint_range(
@@ -87,6 +102,8 @@ class BasicConstraintMixin:
             Set the maximum value for this constraint.
             If value is None, then disable this constraint.
         """
+        validators.value(min, 0, None)
+        validators.value(max, min, None)
         self._set_constraint_minmax('Range', min=min, max=max)
 
     def set_constraint_range_rate(
@@ -132,6 +149,8 @@ class BasicConstraintMixin:
         min: Optional[float] = None,
         max: Optional[float] = None,
     ) -> None:
+        validators.value(min, 0, None)
+        validators.value(max, min, None)
         """Set Altitude constraint on this object.
         
         Params
@@ -151,6 +170,8 @@ class BasicConstraintMixin:
         min: Optional[float] = None,
         max: Optional[float] = None,
     ) -> None:
+        validators.value(min, 0, None)
+        validators.value(max, min, None)
         """Set Propagation Delay constraint on this object.
         
         Params
@@ -167,7 +188,7 @@ class BasicConstraintMixin:
 
 
 class SunConstraintMixin:
-    def set_constraint_sun_elevation_angle(
+    def set_constraint_solar_elevation_angle(
         self: Object,
         min: Optional[float] = None,
         max: Optional[float] = None,
@@ -184,6 +205,8 @@ class SunConstraintMixin:
             Set the maximum value for this constraint.
             If value is None, then disable this constraint.
         """
+        validators.value(min, 0, 90)
+        validators.value(max, min, 90)
         self._set_constraint_minmax('SunElevationAngle', min=min, max=max)
 
     def set_constraint_lunar_elevation_angle(
@@ -203,9 +226,11 @@ class SunConstraintMixin:
             Set the maximum value for this constraint.
             If value is None, then disable this constraint.
         """
+        validators.value(min, 0, 90)
+        validators.value(max, min, 90)
         self._set_constraint_minmax('LunarElevationAngle', min=min, max=max)
 
-    def set_constraint_los_sun_illumination_angle(
+    def set_constraint_los_solar_illumination_angle(
         self: Object,
         min: Optional[float] = None,
         max: Optional[float] = None,
@@ -222,13 +247,22 @@ class SunConstraintMixin:
             Set the maximum value for this constraint.
             If value is None, then disable this constraint.
         """
+        validators.value(min, 0, 90)
+        validators.value(max, min, 90)
+
+        # Must be specified together or not at all
+        a = bool(min is None)
+        b = bool(max is None)
+        if (a and not b) or (not a and b):
+            raise ValueError(f'Azimuth constraint must have both min and max, or neither')
+
         self._set_constraint_minmax('LOSSunIlluminationAngle', min=min, max=max)
-    
-    def set_constraint_los_sun_exclusion(
+
+    def set_constraint_los_solar_exclusion(
         self: Object,
         value: Optional[float] = None,
     ) -> None:
-        """Set Line of Sight (LOS) Sun Exclusion constraint on this object.
+        """Set Line of Sight (LOS) Solar Exclusion constraint on this object.
         
         Params
         ------
@@ -236,21 +270,8 @@ class SunConstraintMixin:
             Set the value for this constraint.
             If value is None, then disable this constraint.
         """
+        validators.value(value, 0, 180)
         self._set_constraint_value('LOSSunExclusion', value)
-    
-    def set_constraint_sun_specular_exclusion(
-        self: Object,
-        value: Optional[float] = None,
-    ) -> None:
-        """Set Sun Specular Exclusion constraint on this object.
-        
-        Params
-        ------
-        value: Optional[float]
-            Set the value for this constraint.
-            If value is None, then disable this constraint.
-        """
-        self._set_constraint_value('SunSpecularExclusion', value)
 
     def set_constraint_los_lunar_exclusion(
         self: Object,
@@ -264,7 +285,23 @@ class SunConstraintMixin:
             Set the value for this constraint.
             If value is None, then disable this constraint.
         """
+        validators.value(value, 0, 180)
         self._set_constraint_value('LOSLunarExclusion', value)
+
+    def set_constraint_sun_specular_exclusion(
+        self: Object,
+        value: Optional[float] = None,
+    ) -> None:
+        """Set Sun Specular Exclusion constraint on this object.
+        
+        Params
+        ------
+        value: Optional[float]
+            Set the value for this constraint.
+            If value is None, then disable this constraint.
+        """
+        validators.value(value, 0, 180)
+        self._set_constraint_value('SunSpecularExclusion', value)
 
     def set_constraint_lighting(
         self: Object,
@@ -328,6 +365,8 @@ class FacilityConstraintMixin(
             Set the maximum value for this constraint.
             If value is None, then disable this constraint.
         """
+        validators.value(min, 0, None)
+        validators.value(max, min, None)
         self._set_constraint_minmax('AzimuthRate', min=min, max=max)
 
     def set_constraint_elevation_rate(
@@ -347,4 +386,6 @@ class FacilityConstraintMixin(
             Set the maximum value for this constraint.
             If value is None, then disable this constraint.
         """
+        validators.value(min, 0, None)
+        validators.value(max, min, None)
         self._set_constraint_minmax('ElevationRate', min=min, max=max)
