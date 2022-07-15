@@ -183,7 +183,7 @@ def test_facility_set_constraint_propagation_delay():
             assert got == exp
 
 
-def test_facility_set_constraint_sun_elevation_angle():
+def test_facility_set_constraint_solar_elevation_angle():
     exp = 'SetConstraint */Facility/DC SunElevationAngle Min 10 Max 20'
     with mock.patch('socket.socket') as mock_sock:
         mock_sock.return_value.recv.return_value = b'ACK'
@@ -191,7 +191,7 @@ def test_facility_set_constraint_sun_elevation_angle():
         with Connect() as c:
             print(c)
             fac_obj = Facility(c, '*/Facility/DC')
-            fac_obj.set_constraint_sun_elevation_angle(min=10, max=20)
+            fac_obj.set_constraint_solar_elevation_angle(min=10, max=20)
 
             got = c._socket.sendall.call_args[0][0].decode().strip()
             assert got == exp
@@ -211,7 +211,7 @@ def test_facility_set_constraint_lunar_elevation_angle():
             assert got == exp
 
 
-def test_facility_set_constraint_los_sun_illumination_angle():
+def test_facility_set_constraint_los_solar_illumination_angle():
     exp = 'SetConstraint */Facility/DC LOSSunIlluminationAngle Min 10 Max 20'
     with mock.patch('socket.socket') as mock_sock:
         mock_sock.return_value.recv.return_value = b'ACK'
@@ -219,13 +219,13 @@ def test_facility_set_constraint_los_sun_illumination_angle():
         with Connect() as c:
             print(c)
             fac_obj = Facility(c, '*/Facility/DC')
-            fac_obj.set_constraint_los_sun_illumination_angle(min=10, max=20)
+            fac_obj.set_constraint_los_solar_illumination_angle(min=10, max=20)
 
             got = c._socket.sendall.call_args[0][0].decode().strip()
             assert got == exp
 
 
-def test_facility_set_constraint_los_sun_exclusion():
+def test_facility_set_constraint_los_solar_exclusion():
     exp = 'SetConstraint */Facility/DC LOSSunExclusion 10'
     with mock.patch('socket.socket') as mock_sock:
         mock_sock.return_value.recv.return_value = b'ACK'
@@ -233,21 +233,7 @@ def test_facility_set_constraint_los_sun_exclusion():
         with Connect() as c:
             print(c)
             fac_obj = Facility(c, '*/Facility/DC')
-            fac_obj.set_constraint_los_sun_exclusion(10)
-
-            got = c._socket.sendall.call_args[0][0].decode().strip()
-            assert got == exp
-
-
-def test_facility_set_constraint_sun_specular_exclusion():
-    exp = 'SetConstraint */Facility/DC SunSpecularExclusion 10'
-    with mock.patch('socket.socket') as mock_sock:
-        mock_sock.return_value.recv.return_value = b'ACK'
-
-        with Connect() as c:
-            print(c)
-            fac_obj = Facility(c, '*/Facility/DC')
-            fac_obj.set_constraint_sun_specular_exclusion(10)
+            fac_obj.set_constraint_los_solar_exclusion(10)
 
             got = c._socket.sendall.call_args[0][0].decode().strip()
             assert got == exp
@@ -266,3 +252,16 @@ def test_facility_set_constraint_los_lunar_exclusion():
             got = c._socket.sendall.call_args[0][0].decode().strip()
             assert got == exp
 
+
+def test_facility_set_constraint_sun_specular_exclusion():
+    exp = 'SetConstraint */Facility/DC SunSpecularExclusion 10'
+    with mock.patch('socket.socket') as mock_sock:
+        mock_sock.return_value.recv.return_value = b'ACK'
+
+        with Connect() as c:
+            print(c)
+            fac_obj = Facility(c, '*/Facility/DC')
+            fac_obj.set_constraint_sun_specular_exclusion(10)
+
+            got = c._socket.sendall.call_args[0][0].decode().strip()
+            assert got == exp

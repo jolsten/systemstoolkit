@@ -30,8 +30,8 @@ def value(
 
     value = float(value)
 
-    if value is not None and value < min:
+    if min is not None and value < min:
         raise ValueError(f'Value "{value}" must be >= min "{min}"')
 
-    if value is not None and value < min:
+    if max is not None and value > max:
         raise ValueError(f'Value "{value}" must be <= max "{max}"')
