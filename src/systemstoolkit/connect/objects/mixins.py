@@ -480,7 +480,7 @@ class BasicConstraintMixin:
             Set the maximum value for this constraint.
             If value is None, then disable this constraint.
         """
-        self._set_constraint_minmax('AnglularRate', min=min, max=max)
+        self._set_constraint_minmax('AngularRate', min=min, max=max)
 
     def set_constraint_altitude(
         self: Object,
@@ -650,10 +650,11 @@ class SunConstraintMixin:
         if value not in VALID:
             raise ValueError(f'Lighting constraint "{value}" not in {VALID}')
 
-        self._set_constraint_value('LOSSunIlluminationAngle', value)
+        self._set_constraint_value('Lighting', value)
 
 
 class SatelliteConstraintMixin(
+    BaseConstraintMixin,
     BasicConstraintMixin,
     SunConstraintMixin,
 ):
@@ -661,6 +662,7 @@ class SatelliteConstraintMixin(
 
 
 class FacilityConstraintMixin(
+    BaseConstraintMixin,
     BasicConstraintMixin,
     SunConstraintMixin,
 ):

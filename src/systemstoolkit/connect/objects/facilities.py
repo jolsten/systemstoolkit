@@ -1,11 +1,12 @@
 from typing import TYPE_CHECKING, Optional
 from systemstoolkit.connect.objects.base import Object
+from systemstoolkit.connect.objects.mixins import FacilityConstraintMixin
 
 if TYPE_CHECKING:
     from systemstoolkit.connect import Connect # pragma: no cover
 
 
-class Facility(Object):
+class Facility(Object, FacilityConstraintMixin):
     def set_position_cartesian(
         self,
         x: float,
