@@ -93,8 +93,13 @@ class Scenario(Object):
     
     def get_time_period(self) -> Tuple[datetime.datetime, datetime.datetime]:
         '''Get the Scenario Time Period.'''
+        from dateutil.parser import parse
+        
         self.connect.send(f'GetTimePeriod {self.path}')
         msg = self.connect.get_single_message()
+        return tuple(
+            [parse(x.strip()) for x in msg.Data.replace('"', '').split(',')]
+        )
         print(msg)
         return msg
 
