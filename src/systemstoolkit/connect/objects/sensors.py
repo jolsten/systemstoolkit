@@ -3,12 +3,12 @@ from .base import Attachment
 
 
 _SENSOR_TYPES = {
-    'Conical': 'conical',
-    'HalfPower': 'half_power',
-    'Custom': 'custom',
-    'Rectangular': 'rectangular',
-    'SAR': 'sar',
-    'SimpleCone': 'simple_cone',
+    'conical': 'conical',
+    'halfpower': 'half_power',
+    'custom': 'custom',
+    'rectangular': 'rectangular', 
+    'sar': 'sar',
+    'simple': 'simple_cone',
 }
 
 
@@ -22,7 +22,8 @@ class Sensor(Attachment):
         if type.lower() not in [t.lower() for t in _SENSOR_TYPES.keys()]:
             raise ValueError(f'Sensor type "{type}" not in "{list(_SENSOR_TYPES.keys())}"')
         
-        getattr(self, f'define_{_SENSOR_TYPES[type]}')
+        define_func = getattr(self, f'define_{_SENSOR_TYPES[type]}')
+        define_func(*args, **kwargs)
 
     def define_conical(
         self: Attachment,
@@ -77,13 +78,13 @@ class Sensor(Attachment):
     ) -> None:
         command = f'Define {self.path} SAR {min_elevation} {max_elevation} {forward_exclusion} {aft_exclusion}'
         if parent_altitude is not None:
-            raise NotImplementedError
+            raise NotImplementedError # pragma: no cover
 
         if resolution is not None:
             command += f' AngularRes {resolution}'
         self.connect.send(command)
 
-    def define_simple_cone(
+    def define_simple(
         self: Attachment,
         cone_angle: float,
         resolution: Optional[float] = None,

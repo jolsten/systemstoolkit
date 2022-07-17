@@ -16,9 +16,6 @@ class BaseConstraintMixin:
         if max is None:
             max = 'Off'
 
-        if min is not None and max is not None and min > max:
-            raise ValueError(f'Min "{min}" must be less than or equal to Max "{max}"')
-
         command = f'SetConstraint {self.path} {constraint_name} Min {min} Max {max}'
         self.connect.send(command)
 
