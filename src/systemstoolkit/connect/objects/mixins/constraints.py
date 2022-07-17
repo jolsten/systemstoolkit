@@ -3,6 +3,7 @@ from systemstoolkit.typing import TimeInterval
 from systemstoolkit.connect.objects.base import Object, Vehicle, Location
 import systemstoolkit.connect.validators as validators
 
+
 class BaseConstraintMixin:
     def _set_constraint_minmax(
         self: Object,

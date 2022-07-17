@@ -1,5 +1,5 @@
 from .base import Vehicle
-from .mixins import SatelliteStateMixin, SatelliteConstraintMixin
+from .mixins.states import SatelliteStateMixin, SatelliteConstraintMixin
 
 
 class Satellite(Vehicle, SatelliteStateMixin, SatelliteConstraintMixin):

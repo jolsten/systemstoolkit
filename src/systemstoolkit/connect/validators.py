@@ -3,7 +3,6 @@ import re
 
 OBJECT_NAME = re.compile(r'^[\w-]+$')
 
-
 def name(name: str) -> None:
     if len(name) > 64:
         raise ValueError(
