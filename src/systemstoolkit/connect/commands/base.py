@@ -1,15 +1,13 @@
 from abc import ABC, abstractmethod, abstractproperty
-from typing import Optional
+from typing import Protocol, Optional
 import systemstoolkit.connect.validators as validators
 
 
-class ConnectCommand(ABC):
-    @abstractproperty
-    def command(self) -> str:
-        pass
+class ConnectCommand(Protocol):
+    command: str = ...
 
 
-class NewObject(ConnectCommand):
+class NewObject(ABC):
     @abstractproperty
     def cls(self) -> str:
         pass
@@ -33,13 +31,16 @@ class NewObject(ConnectCommand):
     def command(self) -> str:
         return f'New / {self.parent_path}/{self.cls} {self.name}'
 
+
 class NewScenario(NewObject):
     @property
     def command(self) -> str:
         return f'New / Scenario {self.name}'
 
+
 class NewSatellite(NewObject):
     cls = 'Satellite'
+
 
 class NewFacility(NewObject):
     cls = 'Facility'
