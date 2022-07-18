@@ -1,10 +1,10 @@
-import sys
 import socket
 import collections
-
-from systemstoolkit.exceptions import STKCommandError
-from systemstoolkit.connect.objects import Scenario, Satellite
-from systemstoolkit.connect.objects.base import Object
+from typing import List
+from systemstoolkit.exceptions import STKCommandError, STKConnectError
+from systemstoolkit.connect.objects import (
+    _Application, Scenario, Satellite, Location, Facility, Target, Place
+)
 from systemstoolkit.connect import validators
 
 
@@ -32,6 +32,9 @@ class Connect:
         self._socket = None
         self._history = None
         self.units = {}
+    
+    def __str__(self) -> str:
+        return 'Connect()'
     
     def __repr__(self) -> str:
         return f'Connect(host="{self.host}", port={self.port})'
@@ -72,7 +75,7 @@ class Connect:
             self._history.append((command, response))
         
         if response == 'NACK':
-            raise STKCommandError(f'NACK: {command}')
+            raise STKCommandError(command, response)
         
     def _get_ack(self) -> str:
         data = self._socket.recv(3)
@@ -81,7 +84,7 @@ class Connect:
         elif data.decode() == 'NAC':
             data = data + self._socket.recv(1)
             return 'NACK'
-        raise STKCommandError(
+        raise STKConnectError(
             f'Did not receive ACK or NACK, got message: {data.decode()}'
         )
     
@@ -120,10 +123,49 @@ class Connect:
         """Unload (delete) all objects including the current Scenario."""
         self.send('Unload / *')
 
+    def get_class_paths(self, cls: str) -> str:
+        self.send(f'ShowNames * Class {cls}')
+        msg = self.get_single_message()
+        paths = msg.Data.strip().split()
+        return paths
+
+    def get_scenario(self) -> Scenario:
+        scenario_path = self.show_class_paths('Scenario')[0]
+        obj = Scenario(self, scenario_path)
+        return obj
+
+    def get_satellites(self) -> List[Satellite]:
+        paths = self.show_class_paths('Satellite')
+        return [Satellite(self, path) for path in paths]
+
+    def get_facilities(self) -> List[Facility]:
+        paths = self.show_class_paths('Facility')
+        return [Facility(self, path) for path in paths]
+    
+    def get_places(self) -> List[Place]:
+        paths = self.show_class_paths('Place')
+        return [Place(self, path) for path in paths]
+    
+    def get_targets(self) -> List[Target]:
+        paths = self.show_class_paths('Target')
+        return [Target(self, path) for path in paths]
+
+    def get_locations(self) -> List[Location]:
+        a = self.get_facilities()
+        b = self.get_targets()
+        c = self.get_places()
+        return a + b + c
+
+    def get_connect_units(self) -> str:
+        self.send('Units_Get * Connect Abbreviation')
+        msg = self.get_single_message()
+        items = [x.split() for x in msg.Data.strip().replace(';', '').splitlines()]
+        return {dim.lower(): unit for dim, unit in items}
+
     def new_scenario(self, name: str) -> Scenario:
         """Create a new Scenario (by first unloading all)."""
         self.unload_all()
-        obj = Scenario(self, f'Scenario/{name}')
+        obj = Scenario.from_name(self, _Application(), name)
         obj.create()
         return obj
 
@@ -133,12 +175,28 @@ class Connect:
         obj = Satellite(self, f'*/Satellite/{name}')
         obj.create()
         return obj
-
-    def get_connect_units(self) -> str:
-        self.send('Units_Get * Connect Abbreviation')
-        msg = self.get_single_message()
-        items = [x.split() for x in msg.Data.strip().replace(';', '').splitlines()]
-        return {dim.lower(): unit for dim, unit in items}
+    
+    def new_facility(self, name: str) -> Facility:
+        """Create a new Facility with given name."""
+        validators.name(name)
+        obj = Facility(self, f'*/Facility/{name}')
+        obj.create()
+        return obj
+    
+    def new_place(self, name: str) -> Place:
+        """Create a new Place with given name."""
+        validators.name(name)
+        obj = Place(self, f'*/Place/{name}')
+        obj.create()
+        return obj
+    
+    def new_target(self, name: str) -> Target:
+        """Create a new Facility with given name."""
+        validators.name(name)
+        obj = Target(self, f'*/Target/{name}')
+        obj.create()
+        return obj
 
     def update_connect_units(self) -> None:
+        """Get the current Connect units and store them as the .units attribute."""
         self.units = self.get_connect_units()

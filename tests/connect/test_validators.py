@@ -44,3 +44,20 @@ def test_value_valid(value, min, max):
 def test_value_invalid(value, min, max):
     with pytest.raises(ValueError):
         validators.value(value, min, max)
+
+@pytest.mark.parametrize('value, choices', [
+    ('A', 'ABCD'),
+    ('ChoiceB', ['ChoiceA', 'ChoiceB', 'ChoiceC']),
+])
+def test_choice_valid(value, choices):
+    validators.choice(value, choices)
+
+
+
+@pytest.mark.parametrize('value, choices', [
+    ('X', 'ABCD'),
+    ('ChoiceZ', ['ChoiceA', 'ChoiceB', 'ChoiceC']),
+])
+def test_choice_invalid(value, choices):
+    with pytest.raises(ValueError):
+        validators.choice(value, choices)

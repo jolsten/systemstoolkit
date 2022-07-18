@@ -15,6 +15,12 @@ class Object(ABC):
         self.connect = connect
         self.path = path
         self.children = []
+
+    @classmethod
+    def from_name(cls, connect: 'Connect', parent: 'Object', name: str) -> 'Object':
+        """Create an object from a name and its parent."""
+        path = f'{parent.path}/{cls.__name__}/{name}'
+        return cls(connect, path)
     
     @property
     def name(self) -> str:
@@ -81,6 +87,12 @@ class Object(ABC):
             self.path = new_path
 
 
+class _Application:
+    @property
+    def path(self) -> str:
+        return '*'
+
+
 class Scenario(Object):
     def create(self) -> None:
         '''Create a new Scenario.'''
@@ -100,8 +112,6 @@ class Scenario(Object):
         return tuple(
             [parse(x.strip()) for x in msg.Data.replace('"', '').split(',')]
         )
-        print(msg)
-        return msg
 
 
 class Vehicle(Object):

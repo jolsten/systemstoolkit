@@ -1,5 +1,6 @@
 import datetime
 from typing import Iterable, Optional, Union, TYPE_CHECKING
+import systemstoolkit.connect.validators as validators
 from systemstoolkit.utils import make_command
 from systemstoolkit.typing import TimeInterval
 from systemstoolkit.connect.objects.base import Object, Vehicle, Location
@@ -13,7 +14,7 @@ class SetState11ParameterMixin:
         *args,
         **kwargs,
     ) -> None:
-        raise NotImplementedError
+        raise NotImplementedError # pragma: no cover
 
 
 class SetStateCartesianMixin:
@@ -59,11 +60,8 @@ class SetStateCartesianMixin:
         -------
         None
         """
-        if prop not in self._PROPAGATOR:
-            raise ValueError(f'Propagator "{prop}" not in {self._PROPAGATOR}')
-        
-        if coord not in self._COORD_SYSTEM:
-            raise ValueError(f'Coordinate System "{coord}" not in {self._COORD_SYSTEM}')
+        validators.choice(prop, self._PROPAGATOR, name='Propagator')
+        validators.choice(coord, self._COORD_SYSTEM, name='Coordinate System')
 
         self.connect.send(make_command([
             'SetState', self.path, 'Cartesian', prop,
@@ -115,12 +113,8 @@ class SetStateClassicalMixin:
         -------
         None
         """
-
-        if prop not in self._PROPAGATOR:
-            raise ValueError(f'Propagator "{prop}" not in {self._PROPAGATOR}')
-        
-        if coord not in self._COORD_SYSTEM:
-            raise ValueError(f'Coordinate System "{coord}" not in {self._COORD_SYSTEM}')
+        validators.choice(prop, self._PROPAGATOR, name='Propagator')
+        validators.choice(coord, self._COORD_SYSTEM, name='Coordinate System')
 
         self.connect.send(make_command([
             'SetState', self.path, 'Classical', prop,
@@ -176,14 +170,9 @@ class SetStateEquiMixin:
         -------
         None
         """
-        if prop.lower() not in [x.lower() for x in self._PROPAGATOR]:
-            raise ValueError(f'Propagator "{prop}" not in {self._PROPAGATOR}')
-        
-        if coord.lower() not in [x.lower() for x in self._COORD_SYSTEM]:
-            raise ValueError(f'Coordinate System "{coord}" not in {self._COORD_SYSTEM}')
-
-        if direction.lower() not in [x.lower() for x in EQUI_DIRECTIONS]:
-            raise ValueError(f'Direction "{direction}" not in {EQUI_DIRECTIONS}')
+        validators.choice(prop, self._PROPAGATOR, name='Propagator')
+        validators.choice(coord, self._COORD_SYSTEM, name='Coordinate System')
+        validators.choice(direction, EQUI_DIRECTIONS, 'Direction')
 
         self.connect.send(make_command([
             'SetState', self.path, 'Equi', prop,
@@ -225,7 +214,7 @@ class SetStateGPSMixin:
         *args,
         **kwargs,
     ) -> None:
-        raise NotImplementedError
+        raise NotImplementedError # pragma: no cover
 
 
 class SetStateMixedSphericalMixin:
@@ -234,7 +223,7 @@ class SetStateMixedSphericalMixin:
         *args,
         **kwargs,
     ) -> None:
-        raise NotImplementedError
+        raise NotImplementedError # pragma: no cover
 
 
 class SetStateSGP4Mixin:
@@ -284,7 +273,7 @@ class SetStateSimpleAscentMixin:
         *args,
         **kwargs,
     ) -> None:
-        raise NotImplementedError
+        raise NotImplementedError # pragma: no cover
 
 
 class SetStateSP3Mixin:
@@ -293,7 +282,7 @@ class SetStateSP3Mixin:
         *args,
         **kwargs,
     ) -> None:
-        raise NotImplementedError
+        raise NotImplementedError # pragma: no cover
 
 
 class SetStateSPICEMixin:
@@ -302,7 +291,7 @@ class SetStateSPICEMixin:
         *args,
         **kwargs,
     ) -> None:
-        raise NotImplementedError
+        raise NotImplementedError # pragma: no cover
 
 
 class SetStateSphericalMixin:
@@ -311,7 +300,7 @@ class SetStateSphericalMixin:
         *args,
         **kwargs,
     ) -> None:
-        raise NotImplementedError
+        raise NotImplementedError # pragma: no cover
 
 
 class SetStateTLEMixin:
@@ -320,7 +309,7 @@ class SetStateTLEMixin:
         *args,
         **kwargs,
     ) -> None:
-        raise NotImplementedError
+        raise NotImplementedError # pragma: no cover
 
 
 class SatelliteStateMixin(

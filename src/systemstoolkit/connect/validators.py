@@ -1,5 +1,5 @@
-from typing import Optional
 import re
+from typing import Optional, Iterable
 
 OBJECT_NAME = re.compile(r'^[\w-]+$')
 
@@ -34,3 +34,11 @@ def value(
 
     if max is not None and value > max:
         raise ValueError(f'Value "{value}" must be <= max "{max}"')
+
+def choice(
+    value: str,
+    choices: Iterable[str],
+    name: str = 'Value',
+) -> None:
+    if value.lower() not in [x.lower() for x in choices]:
+        raise ValueError(f'{name} "{value}" not a valid choice in "{choices}"')
